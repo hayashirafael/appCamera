@@ -1,9 +1,20 @@
 import React, {useState} from 'react';
-import { View, Text, StatusBar, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StatusBar, StyleSheet, TouchableOpacity, Modal, Image } from 'react-native';
 import { RNCamera } from 'react-native-camera'
 
 export default function projetoCamera() {
   const [tipo, setTipo] = useState(RNCamera.Constants.Type.back) //iniciar com a camera traseira
+  const [open, setOpen] = useState(false)
+  const [capture, setCapture] = useState(null)
+
+  async function takePicture(camera) {
+    const options = {quality: 0.5, base64: true}
+    const data = await camera.takePictureAsync(options)
+
+    setCapture(data.uri)
+    setOpen(true)
+    console.log(data.uri)
+  }
 
  return (
    <View style={styles.container}>
@@ -24,7 +35,7 @@ export default function projetoCamera() {
            <View
            style={{marginBottom: 35, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between'}}>
 
-             <TouchableOpacity onPress={() => {}} style={styles.capture} >
+             <TouchableOpacity onPress={() => takePicture(camera)} style={styles.capture} >
                <Text>Tirar foto</Text>
              </TouchableOpacity>
              
@@ -37,6 +48,28 @@ export default function projetoCamera() {
        }}
 
      </RNCamera>
+
+     {capture && <Modal animationType="slide" transparent={false} visible={open} >
+         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', margin: 20}} >
+           <TouchableOpacity
+           style={{margin: 10}}
+           onPress={() => setOpen(false)}
+           >
+             <Text style={{fontSize: 24}}>Fechar</Text>
+
+           </TouchableOpacity>
+
+           <Image
+           resizeMode="contain"
+           style={{width: 350, height: 450, borderRadius: 15}}
+           source={{uri: capture}}
+           />
+
+         </View>
+       </Modal>}
+
+       
+
    </View>
   );
 }
