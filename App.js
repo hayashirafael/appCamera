@@ -1,11 +1,20 @@
 import React, {useState} from 'react';
 import { View, Text, StatusBar, StyleSheet, TouchableOpacity, Modal, Image } from 'react-native';
 import { RNCamera } from 'react-native-camera'
+import Icon from 'react-native-vector-icons/Feather'
 
 export default function projetoCamera() {
   const [tipo, setTipo] = useState(RNCamera.Constants.Type.back) //iniciar com a camera traseira
   const [open, setOpen] = useState(false)
   const [capture, setCapture] = useState(null)
+
+  function cameraType() {
+    if (tipo === RNCamera.Constants.Type.back) {
+      setTipo(RNCamera.Constants.Type.front)
+    } else {
+      setTipo(RNCamera.Constants.Type.back)
+    }
+  }
 
   async function takePicture(camera) {
     const options = {quality: 0.5, base64: true}
@@ -48,8 +57,15 @@ export default function projetoCamera() {
        }}
 
      </RNCamera>
-
+     
+       <View style={styles.trocar}>
+         <TouchableOpacity onPress={() => cameraType()} >
+           <Icon name="rotate-cw" size={30} color="#ffffff" />
+         </TouchableOpacity>
+       </View>
      {capture && <Modal animationType="slide" transparent={false} visible={open} >
+       
+       
          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', margin: 20}} >
            <TouchableOpacity
            style={{margin: 10}}
@@ -62,7 +78,7 @@ export default function projetoCamera() {
            <Image
            resizeMode="contain"
            style={{width: 350, height: 450, borderRadius: 15}}
-           source={{uri: capture}}
+           source={{uri: cap}}
            />
 
          </View>
@@ -91,5 +107,11 @@ const styles = StyleSheet.create({
     padding: 15,
     alignSelf: 'center',
     margin: 20
+  },
+  trocar: {
+    
+    position: 'absolute',
+    right: 25,
+    top: 40
   }
 })
